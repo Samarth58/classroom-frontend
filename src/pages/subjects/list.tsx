@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -25,16 +25,38 @@ import { DataTable } from "@/components/refine-ui/data-table/data-table";
 
 const SubjectList = () => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
     const [selectedDepartment, setSelectedDepartment] = useState("all");
 
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 300);
 
-    const departmentFilter = selectedDepartment ==='all' ? []: [
-        {field:'department', operator:'eq' as const,
-        value:selectedDepartment} ]
-    
-    const searchFilter = searchQuery ? [
-        {field:'name', operator:'contains' as const, value:searchQuery}
-    ] : [];
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const departmentFilter =
+        selectedDepartment === "all"
+            ? []
+            : [
+                  {
+                      field: "department",
+                      operator: "eq" as const,
+                      value: selectedDepartment,
+                  },
+              ];
+
+    const searchFilter = debouncedSearchQuery
+        ? [
+              {
+                  field: "name",
+                  operator: "contains" as const,
+                  value: debouncedSearchQuery,
+              },
+          ]
+        : [];
 
     const subjectTable = useTable<Subject>({
         columns: useMemo<ColumnDef<Subject>[]>(
@@ -56,27 +78,46 @@ const SubjectList = () => {
                     id: "name",
                     accessorKey: "name",
                     size: 200,
-                    header: () => <p className="column-title">Name</p>,
-                    cell: ({ getValue }) => <span>{getValue<string>()}</span>,
-                    filterFn: "includesString"
+                    header: () => (
+                        <p className="column-title">
+                            Name
+                        </p>
+                    ),
+                    cell: ({ getValue }) => (
+                        <span>{getValue<string>()}</span>
+                    ),
+                    filterFn: "includesString",
                 },
                 {
                     id: "department",
                     accessorKey: "department.name",
                     size: 150,
-                    header: () => <p className="column-title">Department</p>,
+                    header: () => (
+                        <p className="column-title">
+                            Department
+                        </p>
+                    ),
                     cell: ({ getValue }) => (
-                        <Badge variant="secondary">{getValue<string>()}</Badge>
+                        <Badge variant="secondary">
+                            {getValue<string>()}
+                        </Badge>
                     ),
                 },
                 {
-                    id:"description",
-                    accessorKey:"description",
-                    size:300,
-                    header: () => <p className="column-title">Description</p>,
-                    cell: ({ getValue }) => <span 
-                    className="truncate line-clamp-2">{getValue<string>()}</span>,
-                }
+                    id: "description",
+                    accessorKey: "description",
+                    size: 300,
+                    header: () => (
+                        <p className="column-title">
+                            Description
+                        </p>
+                    ),
+                    cell: ({ getValue }) => (
+                        <span className="truncate line-clamp-2">
+                            {getValue<string>()}
+                        </span>
+                    ),
+                },
             ],
             []
         ),
@@ -90,14 +131,19 @@ const SubjectList = () => {
             },
 
             filters: {
-                permanent: [...departmentFilter, ...searchFilter]
+                permanent: [
+                    ...departmentFilter,
+                    ...searchFilter,
+                ],
             },
+
             sorters: {
                 initial: [
                     {
-                        field: "id", order: "desc"
-                    }
-                ]
+                        field: "id",
+                        order: "desc",
+                    },
+                ],
             },
         },
     });
@@ -106,11 +152,14 @@ const SubjectList = () => {
         <ListView>
             <Breadcrumb />
 
-            <h1 className="page-title">Subjects</h1>
+            <h1 className="page-title">
+                Subjects
+            </h1>
 
             <div className="intro-row">
                 <p>
-                    Quick access to essential metrics and management tools.
+                    Quick access to essential metrics and
+                    management tools.
                 </p>
 
                 <div className="actions-row">
@@ -131,7 +180,9 @@ const SubjectList = () => {
                     <div className="flex gap-2 w-full sm:w-auto">
                         <Select
                             value={selectedDepartment}
-                            onValueChange={setSelectedDepartment}
+                            onValueChange={
+                                setSelectedDepartment
+                            }
                         >
                             <SelectTrigger className="w-full sm:w-auto">
                                 <SelectValue placeholder="All Departments" />
@@ -142,14 +193,18 @@ const SubjectList = () => {
                                     All Departments
                                 </SelectItem>
 
-                                {DEPARTMENT_OPTIONS.map((department) => (
-                                    <SelectItem
-                                        key={department.value}
-                                        value={department.value}
-                                    >
-                                        {department.label}
-                                    </SelectItem>
-                                ))}
+                                {DEPARTMENT_OPTIONS.map(
+                                    (department) => (
+                                        <SelectItem
+                                            key={department.value}
+                                            value={department.value}
+                                        >
+                                            {
+                                                department.label
+                                            }
+                                        </SelectItem>
+                                    )
+                                )}
                             </SelectContent>
                         </Select>
 

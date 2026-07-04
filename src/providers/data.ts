@@ -1,35 +1,44 @@
-import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
+import {
+    createDataProvider,
+    CreateDataProviderOptions,
+} from "@refinedev/rest";
 import { BACKEND_BASE_URL } from "@/constants";
 
 type ListResponse<T = unknown> = {
-  data: T[];
-  pagination?: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
+    data: T[];
+    pagination?: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
 };
 
 const options: CreateDataProviderOptions = {
-  getList: {
-    getEndpoint: ({ resource }) => resource,
+    getList: {
+        getEndpoint: ({ resource }) => resource,
 
-    mapResponse: async (response) => {
-      const payload: ListResponse = await response.json();
-      return payload.data ?? [];
-    },
+        mapResponse: async (response) => {
+            const payload: ListResponse = await response.clone().json();
 
-    getTotalCount: async (response) => {
-      const payload: ListResponse = await response.json();
-      return payload.pagination?.total ?? payload.data.length;
+            return payload.data ?? [];
+        },
+
+        getTotalCount: async (response) => {
+            const payload: ListResponse = await response.clone().json();
+
+            return (
+                payload.pagination?.total ??
+                payload.data?.length ??
+                0
+            );
+        },
     },
-  },
 };
 
 const { dataProvider } = createDataProvider(
-  BACKEND_BASE_URL,
-  options
+    BACKEND_BASE_URL,
+    options
 );
 
 export { dataProvider };
