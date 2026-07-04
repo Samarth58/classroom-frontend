@@ -24,16 +24,13 @@ import Dashboard from "@/pages/dashboard";
 import { Home } from "lucide-react";
 import { BookOpen } from "lucide-react";
 import SubjectsCreate from "@/pages/subjects/create.tsx";
-
-function SubjectsList() {
-    return null;
-}
+import SubjectsList from "@/pages/subjects/list.tsx";
 
 function App() {
     // @ts-ignore
-    let subjects;
     // @ts-ignore
     // @ts-ignore
+    console.log('dataProvider at runtime:', dataProvider);
     return (
         <BrowserRouter>
 
@@ -81,14 +78,11 @@ function App() {
                                         path="/"
                                         element={<Dashboard />}
                                     />
-                                    <Route path={subjects}>
-                                        <Route index element={<SubjectsList />}/>
+                                    <Route path="subjects">
+                                        <Route index element={<SubjectsList />} />
                                         <Route path="create" element={<SubjectsCreate />} />
                                     </Route>
 
-                                    {/* Example additional routes */}
-                                    {/* <Route path="students" element={<Students />} /> */}
-                                    {/* <Route path="teachers" element={<Teachers />} /> */}
                                 </Route>
                             </Routes>
 
