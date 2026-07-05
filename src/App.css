@@ -114,8 +114,12 @@
   }
 
 .intro-row {
-  @apply flex flex-col items-start gap-5;
+  @apply flex flex-row items-center justify-between gap-5 flex-wrap;
 }
+
+  .text-gradient-orange {
+    @apply bg-gradient-to-r from-orange-500 to-orange-700 bg-clip-text text-transparent;
+  }
 
   .class-view {
     @apply container mx-auto pb-8 px-2 sm:px-4;
