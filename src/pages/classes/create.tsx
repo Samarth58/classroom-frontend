@@ -46,11 +46,12 @@ const Create = () => {
         handleSubmit,
         formState: { isSubmitting, errors },
         control,
+        refineCore: { onFinish },
     } = form;
 
     const onSubmit = async (values: z.infer<typeof classSchema>) => {
         try {
-            console.log(values);
+            await onFinish(values);
         } catch (error) {
             console.error("Error creating class:", error);
         }
@@ -93,7 +94,7 @@ const Create = () => {
             })
         } else {
             field.onChange('');
-            form.setValue('bannerCldPubId', '', {
+            form.setValue('bannerCldPubId', file.publicId, {
                 shouldValidate: true,
                 shouldDirty: true,
             })
@@ -135,8 +136,15 @@ const Create = () => {
                                             </FormLabel>
                                             <FormControl>
                                                 <UploadWidget
-                                                    value={field.value ? { url: field.value, publicId: bannerPublicId ?? '' } : null}
-                                                    onChange={(file: any) => setBannerImage(file, field)}
+                                                    value={
+                                                        field.value
+                                                            ? {
+                                                                url: field.value,
+                                                                publicId: bannerPublicId ?? "",
+                                                            }
+                                                            : null
+                                                    }
+                                                    onChange={(file) => setBannerImage(file, field)}
                                                 />
                                             </FormControl>
                                             <FormMessage />
