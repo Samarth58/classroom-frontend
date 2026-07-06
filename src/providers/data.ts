@@ -3,6 +3,8 @@ import {
     CreateDataProviderOptions,
 } from "@refinedev/rest";
 import { BACKEND_BASE_URL } from "@/constants";
+import { HttpError } from "@refinedev/core";
+
 
 type ListResponse<T = unknown> = {
     data: T[];
@@ -14,17 +16,69 @@ type ListResponse<T = unknown> = {
     };
 };
 
+const buildHttpError = async (
+    response: Response,
+): Promise<HttpError> => {
+    let message = "Request failed";
+
+    try {
+        const payload = (await response.json()) as {
+            message?: string;
+            errors?: string[];
+        };
+
+        if (payload.message) {
+            message = payload.message;
+        }
+    } catch {
+        // Ignore JSON parsing errors
+    }
+
+    return {
+        message,
+        statusCode: response.status,
+    };
+};
+
 const options: CreateDataProviderOptions = {
     getList: {
+        buildQueryParams: async ({ resource, filters }) => {
+            const params: Record<string, string> = {};
+
+            filters?.forEach((filter: any) => {
+                if (
+                    filter &&
+                    "field" in filter &&
+                    "value" in filter
+                ) {
+                    const { field, value } = filter;
+
+                    if (resource === "subjects") {
+                        if (field === "department") {
+                            params.department = String(value);
+                        }
+
+                        if (field === "name" || field === "code") {
+                            params.search = String(value);
+                        }
+                    }
+                }
+            });
+
+            return params;
+        },
         getEndpoint: ({ resource }) => resource,
 
         mapResponse: async (response) => {
+            if (!response.ok) throw await buildHttpError(response.clone());
             const payload: ListResponse = await response.clone().json();
 
             return payload.data ?? [];
         },
 
         getTotalCount: async (response) => {
+            if (!response.ok) throw await buildHttpError(response.clone());
+
             const payload: ListResponse = await response.clone().json();
 
             return (
