@@ -169,7 +169,7 @@ const SubjectList = () => {
                         <Input
                             type="text"
                             placeholder="Search by name..."
-                            className="search-input w-full"
+                            className="pl-14 w-full"
                             value={searchQuery}
                             onChange={(e) =>
                                 setSearchQuery(e.target.value)

@@ -3,7 +3,7 @@ import {
     CreateDataProviderOptions,
 } from "@refinedev/rest";
 import { BACKEND_BASE_URL } from "@/constants";
-import { HttpError } from "@refinedev/core";
+import { CreateResponse, HttpError } from "@refinedev/core";
 
 
 type ListResponse<T = unknown> = {
@@ -62,6 +62,16 @@ const options: CreateDataProviderOptions = {
                             params.search = String(value);
                         }
                     }
+
+                    if (resource === "users") {
+                        if (field === "role") {
+                            params.role = String(value);
+                        }
+
+                        if (field === "name" || field === "email") {
+                            params.search = String(value);
+                        }
+                    }
                 }
             });
 
@@ -88,6 +98,16 @@ const options: CreateDataProviderOptions = {
             );
         },
     },
+    create: {
+        getEndpoint: ({ resource }) => resource,
+        buildBodyParams: async ({ variables }) => variables,
+        mapResponse: async (response) => {
+            const json: CreateResponse = await response.json();
+            return json.data ?? [];
+        },
+
+
+    }
 };
 
 const { dataProvider } = createDataProvider(
