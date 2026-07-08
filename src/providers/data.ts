@@ -3,7 +3,7 @@ import {
     CreateDataProviderOptions,
 } from "@refinedev/rest";
 import { BACKEND_BASE_URL } from "@/constants";
-import { CreateResponse, HttpError } from "@refinedev/core";
+import { CreateResponse, GetOneResponse, HttpError } from "@refinedev/core";
 
 
 type ListResponse<T = unknown> = {
@@ -121,7 +121,16 @@ const options: CreateDataProviderOptions = {
         },
 
 
-    }
+    },
+    getOne: {
+        getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+
+        mapResponse: async (response) => {
+            if (!response.ok) throw await buildHttpError(response.clone());
+            const json: GetOneResponse = await response.json();
+            return json.data;
+        },
+    },
 };
 
 const { dataProvider } = createDataProvider(
@@ -129,4 +138,4 @@ const { dataProvider } = createDataProvider(
     options
 );
 
-export { dataProvider };
+export { dataProvider }
