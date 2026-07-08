@@ -65,7 +65,7 @@ const ClassesShow = () => {
                 header: () => <p className="column-title">Details</p>,
                 cell: ({ row }) => (
                     <ShowButton
-                        resource="users"
+                        resource="classes"
                         recordItemId={row.original.id}
                         variant="outline"
                         size="sm"

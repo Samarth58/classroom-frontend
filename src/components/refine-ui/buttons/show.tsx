@@ -73,7 +73,11 @@ export const ShowButton = React.forwardRef<
           {children ?? (
             <div className="flex items-center gap-2 font-semibold">
               <Eye className="h-4 w-4" />
-              {!hideText && <span>{label}</span>}
+              {hideText ? (
+                <span className="sr-only">{label}</span>
+              ) : (
+                <span>{label}</span>
+              )}
             </div>
           )}
         </LinkComponent>
