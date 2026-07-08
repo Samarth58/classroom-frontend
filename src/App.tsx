@@ -1,4 +1,4 @@
-import { GitHubBanner, Refine } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerProvider, {
@@ -29,10 +29,6 @@ import ClassesCreate from "@/pages/classes/create.tsx";
 import ClassesList from "@/pages/classes/list.tsx";
 
 function App() {
-    // @ts-ignore
-    // @ts-ignore
-    // @ts-ignore
-    console.log('dataProvider at runtime:', dataProvider);
     return (
         <BrowserRouter>
 
